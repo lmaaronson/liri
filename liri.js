@@ -4,37 +4,59 @@ var request = require("request");
 var inquirer = require("inquirer");
 var keys = require("./keys.js"); //this opens the file keys which has the twitter and spotify API keys
 
+var fs = require("fs")
+
+var Twitter = require('twitter');
+var Twitterclient = new Twitter(
+  keys.twitter                   //brings keys info into my Twitter object
+);
+
 
 var Spotify = require("node-spotify-api");
 var spotify = new Spotify(keys.spotify);
 
 
-inquirer.prompt([{
-    type: "list",
-    name: "whichAPI",
-    message: "Pick one",
-    choices: ["my-twitter", "spotify-me", "movie-this", "do-what-it-says"]
-  }, ])
+var firstChoice = process.argv[2]   //3rd item in the terminal input
+console.log(firstChoice)
 
-  .then(function (user) {
+var secondChoice = process.argv[3]   //4th item in the terminal input
+console.log(secondChoice)
 
-    if (user.whichAPI === "my-twiiter") {
+
+
+// inquirer.prompt([{
+//     type: "list",
+//     name: "whichAPI",
+//     message: "Pick one",
+//     choices: ["my-twitter", "spotify-me", "movie-this", "do-what-it-says"]
+//   }, 
+// ])
+
+// .then(function (user) {
+
+    //either for loop to limit to 20 or check parameters to limit to 20
+
+    if (user.whichAPI === "my-twitter") {
       var params = {
-        lmaaronson: 'nodejs'
+        screen_name: 'lmaaronson'
       };
-      client.get('statuses/user_timeline', params, function (error, tweets, response) {
+      
+      console.log(params)
+      Twitterclient.get('statuses/user_timeline', params, function (error, tweets, response) {
         if (!error) {
-          console.log(tweets);
-          console.log("here are your last 20 tweets");
+          for (var i = 0; i < 4; i++) {
+            console.log(tweets[i].created_at);
+            console.log("");
+            console.log(tweets[i].text);
+        
         }
-      });
+      }
+      
+  });
+} 
 
 
-
-
-
-
-    } else if (user.whichAPI === "spotify-me") {
+    else if (user.whichAPI === "spotify-me") {
       console.log("what song?");
       inquirer.prompt([{
             type: "input",
@@ -74,19 +96,20 @@ inquirer.prompt([{
         .then(function (user) {
           var queryUrl = "http://www.omdbapi.com/?t=" + user.movie + "&y=&plot=short&apikey=trilogy";
           console.log(queryUrl);
-          var jsonData = JSON.parse(body);
           request(queryUrl, function (error, response, body) {
             if (!error && response.statusCode === 200) {
-              console.log("Title: " + JSONData.Title);
-              console.log("Year: " + JSONnData.Year);
-              console.log("Rated: " + JSONnData.Rated);
-              console.log("IMDB Rating: " + JSONData.imdbRating);
-              console.log("Country: " + JSONData.Country);
-              console.log("Language: " + JSONData.Language);
-              console.log("Plot: " + JSONData.Plot);
-              console.log("Actors: " + JSONData.Actors);
-              console.log("Rotten Tomatoes Rating: " + JSONData.Ratings[1].Value);
+              var jsonData = JSON.parse(body)
+              console.log("Title: " + jsonData.Title);
+              console.log("Year: " + jsonData.Year);
+              console.log("Rated: " + jsonData.Rated);
+              console.log("IMDB Rating: " + jsonData.imdbRating);
+              console.log("Country: " + jsonData.Country);
+              console.log("Language: " + jsonData.Language);
+              console.log("Plot: " + jsonData.Plot);
+              console.log("Actors: " + jsonData.Actors);
+              console.log("Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value);
             }
+            console.log(error)
           });
 
 
@@ -104,6 +127,7 @@ inquirer.prompt([{
 
     } else if (user.whichAPI === "do-what-it-says") {
       console.log("i get to choose for you!");
+      
       fs.readFile("random.txt", "utf8", function (error, data) {
         if (error) {
           return console.log(error);
@@ -114,4 +138,4 @@ inquirer.prompt([{
 
       });
     }
-  });
+});
