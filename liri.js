@@ -24,15 +24,15 @@ console.log(secondChoice)
 
 
 
-// inquirer.prompt([{
-//     type: "list",
-//     name: "whichAPI",
-//     message: "Pick one",
-//     choices: ["my-twitter", "spotify-me", "movie-this", "do-what-it-says"]
-//   }, 
-// ])
+inquirer.prompt([{
+    type: "list",
+    name: "whichAPI",
+    message: "Pick one",
+    choices: ["my-twitter", "spotify-me", "movie-this", "do-what-it-says"]
+  }, 
+])
 
-// .then(function (user) {
+.then(function (user) {
 
     //either for loop to limit to 20 or check parameters to limit to 20
 
